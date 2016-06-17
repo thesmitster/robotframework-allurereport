@@ -1,0 +1,12 @@
+syntax: glob
+
+# OS files
+*~
+*.DS_Store
+
+# IDE files
+.idea/
+*.iml
+
+#Compiled source
+*.pyc
