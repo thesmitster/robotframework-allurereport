@@ -10,4 +10,9 @@ setup(
     download_url = '',
     keywords = ['allure', 'robotframework', 'reporting'],
     classifiers = [],
+    install_requires=[
+        'lxml>=3.6.0',
+        'py>=1.4',
+        'namedlist>=1.7',
+    ]
 )
