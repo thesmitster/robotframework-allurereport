@@ -1,8 +1,9 @@
-from disutils.core import setup
+from setuptools import setup
+
 setup(
     name = 'robotframework_allure',
     packages = ['robotframework_allure'],
-    version = '0.1',
+    version = '0.1.2',
     description = 'Allure for Robot Framework',
     author = 'Eltjona Qato',
     author_email = 'qatoeltjona@gmail.com',
@@ -11,8 +12,8 @@ setup(
     keywords = ['allure', 'robotframework', 'reporting'],
     classifiers = [],
     install_requires=[
-        'lxml>=3.6.0',
-        'py>=1.4',
-        'namedlist>=1.7',
+        'lxml',
+        'py',
+        'namedlist',
     ]
 )
