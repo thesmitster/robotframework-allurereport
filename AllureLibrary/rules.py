@@ -11,7 +11,7 @@ from six import u, unichr
 from lxml import objectify
 from namedlist import namedlist
 
-from allure.utils import unicodify
+from utils import unicodify
 
 
 def element_maker(name, namespace):

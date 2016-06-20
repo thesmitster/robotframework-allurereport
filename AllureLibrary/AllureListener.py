@@ -22,13 +22,10 @@ import shutil
 
 
 class AllureListener(object):
-    ROBOT_LIBRARY_SCOPE = "GLOBAL"
     ROBOT_LISTENER_API_VERSION = 2
 
-    def __init__(self, logdir='reports/'):
-        self.ROBOT_LIBRARY_LISTENER = self
+    def __init__(self, logdir):
         self.logdir = os.path.normpath(os.path.abspath(os.path.expanduser(os.path.expandvars(logdir))))
-
         if not os.path.exists(self.logdir):
             os.makedirs(self.logdir)
         else:
@@ -107,11 +104,13 @@ class AllureListener(object):
 
     def log_message(self, msg):
         if '.png' in msg['message']:
-            self.attach('NEW', msg['message'], 'html')
+            self.attach('LOG', msg['message'], 'html')
 
     def _move_attachment(self):
         path = os.getcwd()
         new_path = os.path.join(self.logdir, 'allure-report/data/')
+        if not os.path.exists(new_path):
+            os.makedirs(new_path)
         for file in os.listdir(path):
             if file.endswith(".png"):
                 shutil.move(os.path.join(path, file), os.path.join(new_path, file))

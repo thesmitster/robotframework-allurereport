@@ -2,18 +2,18 @@ from setuptools import setup
 
 setup(
     name = 'robotframework_allure',
-    packages = ['robotframework_allure'],
-    version = '0.1.2',
+    packages = ['AllureLibrary'],
+    version = '0.1.0',
     description = 'Allure for Robot Framework',
-    author = 'Eltjona Qato',
+    author = 'qatoe1991',
     author_email = 'qatoeltjona@gmail.com',
     url = 'https://github.com/qatoe1991/robotframework_allure',
-    download_url = '',
     keywords = ['allure', 'robotframework', 'reporting'],
     classifiers = [],
     install_requires=[
-        'lxml',
-        'py',
-        'namedlist',
+        "lxml>=3.2.0",
+        "namedlist",
+        "py",
+        "six>=1.9.0"
     ]
 )
