@@ -29,35 +29,6 @@ class Rule(object):
             return True
 
 
-# see http://en.wikipedia.org/wiki/Valid_characters_in_XML#Non-restricted_characters
-
-# We need to get the subset of the invalid unicode ranges according to
-# XML 1.0 which are valid in this python build.  Hence we calculate
-# this dynamically instead of hardcoding it.  The spec range of valid
-# chars is: Char ::= #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD]
-# | [#x10000-#x10FFFF]
-_legal_chars = (0x09, 0x0A, 0x0d)
-_legal_ranges = (
-    (0x20, 0x7E),
-    (0x80, 0xD7FF),
-    (0xE000, 0xFFFD),
-    (0x10000, 0x10FFFF),
-)
-_legal_xml_re = [u("%s-%s") % (unichr(low), unichr(high)) for (low, high) in _legal_ranges if low < sys.maxunicode]
-_legal_xml_re = [unichr(x) for x in _legal_chars] + _legal_xml_re
-illegal_xml_re = re.compile(u('[^%s]') % u('').join(_legal_xml_re))
-
-
-def legalize_xml(arg):
-    def repl(matchobj):
-        i = ord(matchobj.group())
-        if i <= 0xFF:
-            return u('#x%02X') % i
-        else:
-            return u('#x%04X') % i
-    return illegal_xml_re.sub(repl, arg)
-
-
 class Ignored(Rule):
     def if_(self, check):
         return False
@@ -70,13 +41,13 @@ class Element(Rule):
         self.namespace = namespace
 
     def value(self, name, what):
-        return element_maker(self.name or name, self.namespace)(legalize_xml(unicodify(what)))
+        return element_maker(self.name or name, self.namespace)(unicodify(what))
 
 
 class Attribute(Rule):
 
     def value(self, name, what):
-        return legalize_xml(unicodify(what))
+        return unicodify(what)
 
 
 class Nested(Rule):
