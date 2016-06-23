@@ -1,9 +1,3 @@
-"""
-Simple object-to-XML binding mechanism.
-
-@author: pupssman
-"""
-
 import re
 import sys
 
