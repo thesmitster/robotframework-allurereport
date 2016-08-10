@@ -1,13 +1,6 @@
-"""
-XML file rules
-
-@author: qatoe1991
-"""
-
 from rules import xmlfied, Attribute, Element, WrappedMany, Nested, Many, \
     Ignored
-
-ALLURE_NAMESPACE = "urn:model.allure.qatools.yandex.ru"
+from constant import ALLURE_NAMESPACE
 
 class Attach(xmlfied('attachment',
                      source=Attribute(),
@@ -45,7 +38,9 @@ class TestCase(IterAttachmentsMixin,
                        steps=WrappedMany(Nested()),
                        attachments=WrappedMany(Nested()),
                        labels=WrappedMany(Nested()),
+                       parameters=WrappedMany(Nested()),
                        status=Attribute(),
+                       severity=Attribute(),
                        start=Attribute(),
                        stop=Attribute())):
     pass
@@ -64,11 +59,24 @@ class TestSuite(xmlfied('test-suite',
 
 
 class TestKeyword(IterAttachmentsMixin,
-               xmlfied('step',
+                  xmlfied('step',
                        name=Element(),
                        title=Element().if_(lambda x: x),
                        attachments=WrappedMany(Nested()),
                        steps=WrappedMany(Nested()),
                        start=Attribute(),
                        status=Attribute())):
+    pass
+
+
+class TestLabel(xmlfied('label',
+                       name=Attribute(),
+                       value=Attribute())):
+    pass
+
+
+class EnvParameter(xmlfied('parameter',
+                   name=Element(),
+                   key=Element(),
+                   value=Element())):
     pass

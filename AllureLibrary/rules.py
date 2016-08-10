@@ -1,30 +1,26 @@
 import re
 import sys
 
-from six import u, unichr
 from lxml import objectify
 from namedlist import namedlist
 
-from utils import unicodify
+from utils import unicode_helper
 
 
-def element_maker(name, namespace):
+def make_element(name, namespace):
     return getattr(objectify.ElementMaker(annotate=False, namespace=namespace,), name)
 
 
 class Rule(object):
     _check = None
 
-    def value(self, name, what):
-        raise NotImplemented()
-
     def if_(self, check):
         self._check = check
         return self
 
-    def check(self, what):
+    def check(self, data):
         if self._check:
-            return self._check(what)
+            return self._check(data)
         else:
             return True
 
@@ -40,20 +36,20 @@ class Element(Rule):
         self.name = name
         self.namespace = namespace
 
-    def value(self, name, what):
-        return element_maker(self.name or name, self.namespace)(unicodify(what))
+    def value(self, name, data):
+        return make_element(self.name or name, self.namespace)(unicode_helper(data))
 
 
 class Attribute(Rule):
 
-    def value(self, name, what):
-        return unicodify(what)
+    def value(self, name, data):
+        return unicode_helper(data)
 
 
 class Nested(Rule):
 
-    def value(self, name, what):
-        return what.toxml()
+    def value(self, name, data):
+        return data.toxml()
 
 
 class Many(Rule):
@@ -63,29 +59,29 @@ class Many(Rule):
         self.name = name
         self.namespace = namespace
 
-    def value(self, name, what):
-        return [self.rule.value(name, x) for x in what]
+    def value(self, name, data):
+        return [self.rule.value(name, x) for x in data]
 
 
 class WrappedMany(Many):
 
-    def value(self, name, what):
-        values = super(WrappedMany, self).value(name, what)
-        return element_maker(self.name or name, self.namespace)(*values)
+    def value(self, name, data):
+        values = super(WrappedMany, self).value(name, data)
+        return make_element(self.name or name, self.namespace)(*values)
 
 
 def xmlfied(el_name, namespace='', fields=[], **kw):
     items = fields + list(kw.items())
 
-    class MyImpl(namedlist('XMLFied', [(item[0], None) for item in items])):
+    class Listener(namedlist('XMLFied', [(item[0], None) for item in items])):
 
         def toxml(self):
-            el = element_maker(el_name, namespace)
+            el = make_element(el_name, namespace)
 
-            def entries(clazz):
+            def entries(cl):
                 return [(name, rule.value(name, getattr(self, name)))
                         for (name, rule) in items
-                        if isinstance(rule, clazz) and rule.check(getattr(self, name))]
+                        if isinstance(rule, cl) and rule.check(getattr(self, name))]
 
             elements = entries(Element)
             attributes = entries(Attribute)
@@ -95,4 +91,4 @@ def xmlfied(el_name, namespace='', fields=[], **kw):
             return el(*([element for (_, element) in elements + nested + manys]),
                       **dict(attributes))
 
-    return MyImpl
+    return Listener
