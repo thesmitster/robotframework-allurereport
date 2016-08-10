@@ -3,6 +3,7 @@ ALLURE ADAPTOR FOR ROBOT FRAMEWORK
 Allure is an open-spurce framework designed to represent clear test execution reports.
 
 How to use it:
+
     - Just `import AllureLibrary` in the configuration file.
     - The output directory is the same as the output directory of RobotFramework.
     - One of the features is that a test may be connected to a jira issue. The ticket number of Jira startign with DIM should be specified as a tag in the test and the rest of the URL is given through command line `pybot -v ISSUE_TRACKER:http://jira.com/`
@@ -12,6 +13,7 @@ How to use it:
 DEVELOPMENT INFORMATION
 
 Output Convention:
+
     - Every XML file should be named like this: {UUID}-testsuite.xml, where {UUID} is a universally unique identifier.
     - Every XML file should be valid when checked with the Allure schema.
     - The output result of an Allure adapter should store not only XML files with information about tests, but also copies of all attached files.
@@ -19,6 +21,7 @@ Output Convention:
     - One xml file should contain one test suite.
 
 Main features aligned with Robot Framework:
+
     - Steps in Allure Framework are aligned to Keyword in Robot Framework.
     - Test Suites and Test Cases are the same at both xml formats of Robot Framework and Allure.
     - Feature and Stories are implemented as labels.
@@ -26,6 +29,7 @@ Main features aligned with Robot Framework:
     - The allure xml and attached file directory is the same as the output directory of robot framework.
 
 Further development:
+
     - For the time being even the reports from Robot Framework are saved and not disabled. It can be done from the command line, but a solution is also to do it from Allure Library.
     - Screenshots are saved as a copy of the screenshoots generated from Robot Framework. It needs to be improved and some suggestions that needs to be discussed are:
             - Change the filename in `Capture Screenshot` keyword, so it is aligned with Allure requirements.
