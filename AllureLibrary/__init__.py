@@ -1,2 +1,2 @@
-from AllureListener import *
+from allurelistener import *
 

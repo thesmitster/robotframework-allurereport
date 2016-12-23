@@ -107,9 +107,11 @@ class AllureListener(object):
         return
 
     def log_message(self, msg):
-        screenshot = re.search('[a-z]+-[a-z]+-[0-9]+.png',msg['message'])
-        if screenshot:
-            self.attach('{}'.format(screenshot.group(0)) , screenshot.group(0), 'png')
+        if msg['level']=='INFO':
+            screenshot = re.search('[a-z]+-[a-z]+-[0-9]+.png',msg['message'])
+            if screenshot:
+                self.attach('{}'.format(screenshot.group(0)) , screenshot.group(0), 'png')
+        
         return
 
     def close(self): 
@@ -127,9 +129,13 @@ class AllureListener(object):
         This functions created the attachments and append it to the test.
         """
         contents = os.path.join(self.logdir, contents)
-        attach = Attach(source=self._save_attach(open(contents).read(), attach_type=attach_type),
+
+        with open(contents, 'rb') as f:
+            file_contents = f.read()
+
+        attach = Attach(source=self._save_attach(file_contents, attach_type=attach_type),
                         title=title,
-                        type=attach_type)
+                        type='image/'+attach_type)
         self.stack[-1].attachments.append(attach)
         return
 
@@ -170,7 +176,7 @@ class AllureListener(object):
 class AllureLibrary(object):
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
-    ROBOT_LIBRARY_VERSION = 0.1
+    ROBOT_LIBRARY_VERSION = '1.0.1'
 
     def __init__(self):
         self.ROBOT_LIBRARY_LISTENER = AllureListener()

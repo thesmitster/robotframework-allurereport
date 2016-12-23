@@ -1,5 +1,3 @@
-syntax: glob
-
 # OS files
 *~
 *.DS_Store
@@ -8,5 +6,9 @@ syntax: glob
 .idea/
 *.iml
 
-#Compiled source
+# PyDev IDE
+.project
+.pydevproject
+
+# Compiled source
 *.pyc
