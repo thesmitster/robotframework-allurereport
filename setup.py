@@ -1,19 +1,30 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
-    name = 'robotframework_allure',
+    name = 'robotframework-allure',
     packages = ['AllureLibrary'],
-    version = '1.0.1',
-    description = 'Allure for Robot Framework',
-    author = 'Eltjona Qato', 'Anne Kootstra', 
-    author_email = 'qatoeltjona@gmail.com', 'kootstra@hotmail.com'
-    url = 'https://github.com/kootstra/robotframework_allure',
+    version = '1.1.0',
+    description = 'Allure Reporting Adaptor for Robot Framework',
+    long_description = "The Allure Adaptor for Robot Framework is a Library that can be included in the Robot scripts to generate compatible XML files which can then be used to generate the Allure HTML reports.",
+    author = 'Eltjona Qato, Anne Kootstra', 
+    author_email = 'qatoeltjona@gmail.com, kootstra@hotmail.com',
+    url = 'https://github.com/kootstra/robotframework-allure',
     keywords = ['allure', 'robotframework', 'reporting'],
-    classifiers = [],
+    license      = 'MIT License',
+    platforms    = 'any',
+    download_url = 'https://github.com/kootstra/robotframework-allure/tarball/1.1.0',
+    classifiers = [
+                        "License :: OSI Approved :: MIT License",
+                        "Operating System :: OS Independent",
+                        "Programming Language :: Python",
+                        "Topic :: Software Development :: Testing"
+                        "Development Status :: 4 - Beta"
+                  ],
     install_requires=[
         "lxml>=3.2.0",
         "namedlist",
         "py",
-        "six>=1.9.0"
+        "six>=1.9.0",
+        "pytest-allure-adaptor>=1.7.6"
     ]
 )
