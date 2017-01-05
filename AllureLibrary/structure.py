@@ -1,82 +1,31 @@
-from rules import xmlfied, Attribute, Element, WrappedMany, Nested, Many, \
+from allure.rules import xmlfied, Attribute, Element, WrappedMany, Nested, Many, \
     Ignored
-from constant import ALLURE_NAMESPACE
+from allure.constants import ALLURE_NAMESPACE, COMMON_NAMESPACE
+from allure.structure import IterAttachmentsMixin
 
-class Attach(xmlfied('attachment',
-                     source=Attribute(),
-                     title=Attribute(),
-                     type=Attribute())):
-    """
-    Attached file
-    """
+# overwriting the base class in allure.structure with an additional URL param.
+class Environment(xmlfied('environment',
+                          namespace=COMMON_NAMESPACE,
+                          id=Element(),
+                          name=Element(),
+                          url=Element(), # Added
+                          parameters=Many(Nested()))):
+    pass
 
-class Failure(xmlfied('failure',
-                      message=Element(),
-                      trace=Element('stack-trace'))):
-    """
-    trace
-    """
-
-class IterAttachmentsMixin(object):
-
-    def iter_attachments(self):
-        for a in self.attachments:
-            yield a
-
-        for s in self.steps:
-            for a in s.iter_attachments():
-                yield a
-
-
+# Overwriting the base class in allure.structure with an additional SEVERITY attribute.
 class TestCase(IterAttachmentsMixin,
                xmlfied('test-case',
                        id=Ignored(),  # internal field, see AllureTestListener
                        name=Element(),
                        title=Element().if_(lambda x: x),
                        description=Element().if_(lambda x: x),
+#                        description=Element(),
                        failure=Nested().if_(lambda x: x),
                        steps=WrappedMany(Nested()),
                        attachments=WrappedMany(Nested()),
                        labels=WrappedMany(Nested()),
-                       parameters=WrappedMany(Nested()),
                        status=Attribute(),
-                       severity=Attribute(),
+                       severity=Attribute(), # Added
                        start=Attribute(),
                        stop=Attribute())):
-    pass
-
-
-class TestSuite(xmlfied('test-suite',
-                        namespace=ALLURE_NAMESPACE,
-                        name=Element(),
-                        title=Element().if_(lambda x: x),
-                        description=Element().if_(lambda x: x),
-                        tests=WrappedMany(Nested(), name='test-cases'),
-                        labels=WrappedMany(Nested()),
-                        start=Attribute(),
-                        stop=Attribute())):
-    pass
-
-
-class TestKeyword(IterAttachmentsMixin,
-                  xmlfied('step',
-                       name=Element(),
-                       title=Element().if_(lambda x: x),
-                       attachments=WrappedMany(Nested()),
-                       steps=WrappedMany(Nested()),
-                       start=Attribute(),
-                       status=Attribute())):
-    pass
-
-
-class TestLabel(xmlfied('label',
-                       name=Attribute(),
-                       value=Attribute())):
-    pass
-
-
-class EnvParameter(xmlfied('parameter',
-                   name=Element(),
-                   key=Element(),
-                   value=Element())):
     pass
