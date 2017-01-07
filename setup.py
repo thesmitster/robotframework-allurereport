@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'robotframework-allure',
-    packages = ['AllureLibrary'],
+    packages = ['AllureReportLibrary'],
     version = '1.1.0',
     description = 'Allure Reporting Adaptor for Robot Framework',
     long_description = "The Allure Adaptor for Robot Framework is a Library that can be included in the Robot scripts to generate compatible XML files which can then be used to generate the Allure HTML reports.",

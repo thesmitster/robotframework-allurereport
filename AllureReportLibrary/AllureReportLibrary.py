@@ -3,15 +3,24 @@ from robot.libraries.BuiltIn import BuiltIn
 from robot.api import logger
 
 
-class AllureLibrary:
+class AllureReportLibrary:
     """
-    AllureLibrary secondary library
+    Allure Report Library
     
-    AllureOutputPath allows for the setting of a specific path where the 
-    files should be saved.
+    The Allure Adaptor for Robot Framework is a Library that can be included
+    in the Robot scripts to generate Allure
+    compatible XML files which can then be used to generate the Allure HTML
+    reports. These reports provide a clear and dynamic overview of the status
+    of the test run through several graphs and a time line overview of the run
+    itself.
+
+    Optionally an argument can be provided to have the Allure adapter store its 
+    files in a different folder from the normal Robot Framework log files. 
+
+        Library           AllureReportLibrary     C:\\Temp\\Allure
     """
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
-    ROBOT_LIBRARY_VERSION = '1.0.1'
+    ROBOT_LIBRARY_VERSION = '1.1.1'
 
     def __init__(self, AllureOutputPath=None):
 

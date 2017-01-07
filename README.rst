@@ -92,7 +92,7 @@ files in a different folder from the normal Robot Framework log files.
 
 .. code:: robotframework
 
-    Library           AllureLibrary     C:\\Temp\\Allure
+    Library           AllureReportLibrary     C:\\Temp\\Allure
 
 Below a more complete example:
 
@@ -104,7 +104,7 @@ Below a more complete example:
     ...               This test has a workflow that is created using keywords in
     ...               the imported resource file.
     Resource          resource.robot
-    Library           AllureLibrary      //var//lib//Allure
+    Library           AllureReportLibrary      //var//lib//Allure
 
     *** Test Cases ***
     Valid Login
@@ -128,13 +128,13 @@ via PIP the full path to the `AllureListner.py` file.
 The listener has 1 option argument to set the output folder. In the same way as 
 the Library the full path to the folder where the files can be stored.:: 
 
-    robot --listener AllureLibrary.AllureListener;C:\\tmp\AllureLog\ C:\tmp\\RobotScripts
+    robot --listener AllureReportLibrary.AllureListener;C:\\tmp\AllureLog\ C:\tmp\\RobotScripts
 
 Another example but then for `Pabot <https://github.com/mkorpela/pabot>`_. Since
 it supports the regular Robot Framework command line switches as well the difference
 is small.::
 
-    pabot --processes 2 --listener AllureLibrary.AllureListener;C:\\tmp\AllureLog\ C:\tmp\\RobotScripts
+    pabot --processes 2 --listener AllureReportLibrary.AllureListener;C:\\tmp\AllureLog\ C:\tmp\\RobotScripts
 
 Notes
 -----
