@@ -71,6 +71,11 @@ be in place:
 
 Steps
 ^^^^^^^^^^^^^^
+Use PIP::
+
+    pip install robotframework-allurereport
+
+
 Clone the project repository from GitHub. After that you can install
 the framework with::
 
