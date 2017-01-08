@@ -14,9 +14,17 @@ reports. These reports provide a clear and dynamic overview of the status
 of the test run through several graphs and a time line overview of the run
 itself.
 
+.. image:: https://img.shields.io/pypi/v/robotframework-allurereport.svg?label=version
+   :target: https://pypi.python.org/pypi/robotframework-allurereport
+   :alt: Latest version
+
+.. image:: https://img.shields.io/pypi/dm/robotframework-allurereport.svg
+   :target: https://pypi.python.org/pypi/robotframework-allurereport
+   :alt: Number of downloads
+   
 .. image:: 
     https://img.shields.io/badge/license-MIT-blue.svg   
-    :target: https://raw.githubusercontent.com/kootstra/robotframework_allure/master/LICENSE.txt
+    :target: https://raw.githubusercontent.com/kootstra/robotframework-allurereport/master/LICENSE.txt
     :alt: License
 
 .. image:: https://robotframework-slack.herokuapp.com/badge.svg
