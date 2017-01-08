@@ -175,12 +175,8 @@ class AllureListener(object):
                     ''' No Path was provided, so using output dir with additional sub folder. '''
                     self.allurelogdir = BuiltIn().get_variable_value('${OUTPUT_DIR}') + "\\Allure"
 
-            # The Allure class clears the directory each time it's loaded. As 
-            # each Suite loads it's own listener, this would unnecessarily clear
-            # the directory. So, first load the class with a temp folder, then
-            # directly assign the path to the class variable. 
-            self.AllureImplc = AllureImpl(self.allurelogdir+'//demoreport')
-            self.AllureImplc.logdir = self.allurelogdir
+            self.AllureImplc = AllureImpl(self.allurelogdir)
+
             
         if attributes.get('doc') is not '':
             description = attributes.get('doc')

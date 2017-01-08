@@ -23,8 +23,6 @@ class AllureReportLibrary:
     ROBOT_LIBRARY_VERSION = '1.1.1'
 
     def __init__(self, AllureOutputPath=None):
-
-
         # In case Listener is added via Command Line, then Library should not
         # another one. That would result in duplicate log files for Suite.
         # Since RED runs this class to get the documentation, the Try/Except is needed.
@@ -34,6 +32,7 @@ class AllureReportLibrary:
                 self.ROBOT_LIBRARY_LISTENER = AllureListener(AllureOutputPath, 'Library')
         except:
             pass
+        return None
         
     def set_output_dir(self, output_dir):
         """

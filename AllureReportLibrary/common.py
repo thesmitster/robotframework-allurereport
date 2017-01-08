@@ -23,7 +23,18 @@ class AllureImpl(allure.common.AllureImpl):
     All other Parent methods and attributes accessible.
     '''
     def __init__(self, logdir):
-        super(AllureImpl, self).__init__(logdir)
+#         super(AllureImpl, self).__init__(logdir)
+        self.logdir = os.path.normpath(os.path.abspath(os.path.expanduser(os.path.expandvars(logdir))))
+
+        # Delete all files in report directory
+        if not os.path.exists(self.logdir):
+            os.makedirs(self.logdir)
+
+        # That's the state stack. It can contain TestCases or TestSteps.
+        # Attaches and steps go to the object at top of the stack.
+        self.stack = []
+
+        self.testsuite = None            
         self.environment = {}
     
     def store_environment(self, environmentlist):
