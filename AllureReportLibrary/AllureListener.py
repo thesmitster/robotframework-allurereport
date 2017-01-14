@@ -366,9 +366,10 @@ class AllureListener(object):
                 
                 self.stack[-1].steps.append(step)
                 logger.console('marker 2')
+                return
             if(attributes.get('type') == 'Setup' and len(self.testsuite.tests) == 0):
                 self.end_suitesetup(name, attributes)
-
+                return
             if(attributes.get('type') == 'Teardown' and isinstance(self.stack[-1], TestCase) is True):
                 self.end_suitesetup(name, attributes)
                 return
