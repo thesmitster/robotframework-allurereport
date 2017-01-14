@@ -48,6 +48,7 @@ class AllureListener(object):
         self.allurelogdir = allurelogdir
         self.AllureProperties = []
         self.AllureIssueIdRegEx=''
+        self.testsuite is None
 
 
         # Setting this variable prevents the loading of a Library added Listener.
@@ -60,7 +61,99 @@ class AllureListener(object):
             logger.console('')
             
 
+    def start_suitesetup(self, name, attributes):
+        
+        start_test_attributes= {'critical': 'yes',
+                                'doc': 'Test Suite Setup section',
+                                'starttime': attributes['starttime'],
+                                'tags': [],
+                                'id': 's1-s1-t0',
+                                'longname': BuiltIn().get_variable_value('${SUITE_NAME}'),
+                                'template': ''
+                                }
+ 
+        if len(str(start_test_attributes.get('doc'))) > 0:
+            description = str(start_test_attributes.get('doc'))
+        else:
+            description = name
 
+        test = TestCase(name=name,
+                description=description,
+                start=now(),
+                attachments=[],
+                labels=[],
+#                 parameters=[],
+                steps=[])
+
+        self.stack.append(test)
+        return
+    
+    def end_suitesetup(self, name, attributes):
+
+        end_test_attributes= {'critical': 'yes',
+                                'doc': 'Test Suite Setup section',
+                                'starttime': attributes['starttime'],
+                                'endtime': attributes['endtime'],
+                                'status': 'PASS',
+                                'tags': [],
+                                'id': 's1-s1-t0',
+                                'longname': BuiltIn().get_variable_value('${SUITE_NAME}'),
+                                'template': ''
+                                }
+
+#         test = self.stack[-1]
+        test = self.stack.pop()
+        
+        if end_test_attributes.get('status') == Robot.PASS:
+            test.status = Status.PASSED
+#             test.description=attributes.get('message')
+        elif end_test_attributes.get('status')==Robot.FAIL:
+            test.status = Status.FAILED
+            test.failure = Failure(message=end_test_attributes.get('message'), trace='')
+        elif end_test_attributes.get('doc') is not '':
+            test.description = attributes.get('doc')
+
+
+        
+        if end_test_attributes['tags']:
+            for tag in end_test_attributes['tags']:
+                if re.search(self.AllureIssueIdRegEx, tag):
+                    test.labels.append(TestLabel(
+                        name=Label.ISSUE,
+                        value=tag))
+                if tag.startswith('feature'):
+                    test.labels.append(TestLabel(
+                        name='feature',
+                        value=tag.split(':')[-1]))
+                if tag.startswith('story'):
+                    test.labels.append(TestLabel(
+                        name='story',
+                        value=tag.split(':')[-1]))
+                elif tag in SEVERITIES:
+                    test.labels.append(TestLabel(
+                        name='severity',
+                        value=tag))
+                elif tag in STATUSSES:
+                    test.status = tag  # overwrites the actual test status with this value.
+
+#         test.labels.append(TestLabel(
+#             name='thread',
+#             value=str(threading._get_ident())))
+#         self.testsuite.tests.append(test)
+        self.PabotPoolId =  BuiltIn().get_variable_value('${PABOTEXECUTIONPOOLID}')
+        if(self.PabotPoolId is not None):
+            self.threadId = 'PabotPoolId-' + str(self.PabotPoolId)
+        else:
+            self.threadId = threading._get_ident()
+                
+        test.labels.append(TestLabel(
+            name='thread',
+            value=str(self.threadId)))
+
+        self.testsuite.tests.append(test)
+ # ----------------------------------------------------- 
+        test.stop = now()        
+        return test
     
 # Listener functions
 
@@ -210,7 +303,10 @@ class AllureListener(object):
         return
 
     def start_keyword(self, name, attributes):
-        if(attributes.get('type') == 'Keyword'):
+        logger.console('\nstart_keyword: ['+name+']')
+        logger.console('  ['+attributes['type']+'] [stack lenght] ['+str(len(self.stack))+'] [testsuite lenght] ['+ str(len(self.testsuite.tests))+']')
+
+        if(attributes.get('type') == 'Keyword' or (attributes.get('type') == 'Teardown' and len(self.stack) is not 0)):
             keyword = TestStep(name=name,
                     title=attributes.get('kwname'),
                     attachments=[],
@@ -220,8 +316,35 @@ class AllureListener(object):
     #             self.stack[-1].steps.append(keyword)
                 self.stack.append(keyword)
             return keyword
+        
+        """
+        Processing the Suite Setup.
+        
+        Although there is no test case yet, a virtual one is created to allow 
+        for the inclusion of the keyword.
+        """
+        if(attributes.get('type') == 'Setup' and len(self.stack) == 0):
+#             logger.console('\nstart_keyword ['+attributes['type']+'] [stack lenght] ['+str(len(self.stack))+'] [testsuite lenght] ['+ str(len(self.testsuite.tests))+']')
+            self.start_suitesetup(name, attributes)
+            return
+
+#             keyword = TestStep(name=name,
+#                     title=attributes.get('kwname'),
+#                     attachments=[],
+#                     steps=[],
+#                     start=now(),)
+#             if self.stack:
+#     #             self.stack[-1].steps.append(keyword)
+#                 self.stack.append(keyword)
+#             return keyword
+        if(attributes.get('type') == 'Teardown'):
+#             logger.console('\nstart_keyword ['+attributes['type']+'] [stack lenght] ['+str(len(self.stack))+'] [testsuite lenght] ['+ str(len(self.testsuite.tests))+']')
+            pass
 
     def end_keyword(self, name, attributes):
+        logger.console('\nend_keyword: ['+name+']')
+        logger.console('  ['+attributes['type']+'] [stack lenght] ['+str(len(self.stack))+'] [testsuite lenght] ['+ str(len(self.testsuite.tests))+']')
+
         """
         Stops the step at the top of ``self.stack``
         Then adds it to the previous one, as this is a 
@@ -229,7 +352,7 @@ class AllureListener(object):
         # Check to see if there are any items to add the log message to
         # this check is needed because otherwise Suite Setup may fail.
         if len(self.stack) > 0:
-            if(attributes.get('type') == 'Keyword'):
+            if(attributes.get('type') == 'Keyword' or attributes.get('type') == 'Teardown'):
         #         pprint.pprint(attributes)
                 step = self.stack.pop()
                  
@@ -243,7 +366,8 @@ class AllureListener(object):
                 # Append the step to the previous item. This can be another step, or
                 # another keyword.
                 self.stack[-1].steps.append(step)      
-    
+            if(attributes.get('type') == 'Setup' and len(self.testsuite.tests) == 0):
+                self.end_suitesetup(name, attributes)
         return
 
     def log_message(self, msg):
