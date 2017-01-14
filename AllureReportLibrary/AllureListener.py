@@ -84,6 +84,8 @@ class AllureListener(object):
     def end_test(self, name, attributes):
 
         test = self.stack[-1]
+#         test = self.stack.pop()
+        
         if attributes.get('status') == Robot.PASS:
             test.status = Status.PASSED
 #             test.description=attributes.get('message')
@@ -210,7 +212,7 @@ class AllureListener(object):
     def start_keyword(self, name, attributes):
         if(attributes.get('type') == 'Keyword'):
             keyword = TestStep(name=name,
-                    title=name,
+                    title=attributes.get('kwname'),
                     attachments=[],
                     steps=[],
                     start=now(),)
@@ -254,6 +256,30 @@ class AllureListener(object):
                 screenshot = re.search('[a-z]+-[a-z]+-[0-9]+.png',msg['message'])
                 if screenshot:
                     self.attach('{}'.format(screenshot.group(0)) , screenshot.group(0))
+        
+            startKeywordArgs=    {'args': [],
+                 'assign': [],
+                 'doc': '',
+                 'kwname': msg['message'],
+                 'libname': 'BuiltIn',
+                 'starttime': now(),
+                 'tags': [],
+                 'type': 'Keyword'}
+            self.start_keyword('logger', startKeywordArgs)
+
+            startKeywordArgs=     {'args': [],
+                 'assign': [],
+                 'doc': '',
+                 'elapsedtime': 0,
+                 'endtime': now(),
+                 'kwname': msg['message'],
+                 'libname': 'BuiltIn',
+                 'starttime': now(),
+                 'status': 'PASS',
+                 'tags': [],
+                 'type': 'Keyword'}
+            self.end_keyword('logger', startKeywordArgs)
+
             
         return
 
