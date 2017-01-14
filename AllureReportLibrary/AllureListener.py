@@ -83,8 +83,8 @@ class AllureListener(object):
     
     def end_test(self, name, attributes):
 
-        test = self.stack[-1]
-#         test = self.stack.pop()
+#         test = self.stack[-1]
+        test = self.stack.pop()
         
         if attributes.get('status') == Robot.PASS:
             test.status = Status.PASSED
