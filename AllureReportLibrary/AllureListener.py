@@ -175,6 +175,9 @@ class AllureListener(object):
         return
     
     def end_test(self, name, attributes):
+        logger.console('\nend_test: ['+name+']')
+        logger.console(attributes)
+        logger.console('   [stack lenght] ['+str(len(self.stack))+'] [testsuite lenght] ['+ str(len(self.testsuite.tests))+']')
 
 #         test = self.stack[-1]
         test = self.stack.pop()
@@ -328,18 +331,9 @@ class AllureListener(object):
             self.start_suitesetup(name, attributes)
             return
 
-#             keyword = TestStep(name=name,
-#                     title=attributes.get('kwname'),
-#                     attachments=[],
-#                     steps=[],
-#                     start=now(),)
-#             if self.stack:
-#     #             self.stack[-1].steps.append(keyword)
-#                 self.stack.append(keyword)
-#             return keyword
-        if(attributes.get('type') == 'Teardown'):
-#             logger.console('\nstart_keyword ['+attributes['type']+'] [stack lenght] ['+str(len(self.stack))+'] [testsuite lenght] ['+ str(len(self.testsuite.tests))+']')
-            pass
+        if(attributes.get('type') == 'Teardown' and len(self.stack) == 0):
+            self.start_suitesetup(name, attributes)
+            return
 
     def end_keyword(self, name, attributes):
         logger.console('\nend_keyword: ['+name+']')
@@ -352,7 +346,7 @@ class AllureListener(object):
         # Check to see if there are any items to add the log message to
         # this check is needed because otherwise Suite Setup may fail.
         if len(self.stack) > 0:
-            if(attributes.get('type') == 'Keyword' or attributes.get('type') == 'Teardown'):
+            if(attributes.get('type') == 'Keyword' or (attributes.get('type') == 'Teardown' and isinstance(self.stack[-1], TestStep) is True)):
         #         pprint.pprint(attributes)
                 step = self.stack.pop()
                  
@@ -365,9 +359,21 @@ class AllureListener(object):
                  
                 # Append the step to the previous item. This can be another step, or
                 # another keyword.
-                self.stack[-1].steps.append(step)      
+                logger.console('marker 1')
+                logger.console(pprint.pformat(name))
+                logger.console(pprint.pformat(attributes))
+                logger.console(pprint.pformat(step))
+                
+                self.stack[-1].steps.append(step)
+                logger.console('marker 2')
             if(attributes.get('type') == 'Setup' and len(self.testsuite.tests) == 0):
                 self.end_suitesetup(name, attributes)
+
+            if(attributes.get('type') == 'Teardown' and isinstance(self.stack[-1], TestCase) is True):
+                self.end_suitesetup(name, attributes)
+                return
+            
+            
         return
 
     def log_message(self, msg):
