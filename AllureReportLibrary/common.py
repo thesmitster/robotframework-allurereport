@@ -26,7 +26,6 @@ class AllureImpl(allure.common.AllureImpl):
 #         super(AllureImpl, self).__init__(logdir)
         self.logdir = os.path.normpath(os.path.abspath(os.path.expanduser(os.path.expandvars(logdir))))
 
-        # Delete all files in report directory
         if not os.path.exists(self.logdir):
             os.makedirs(self.logdir)
 
