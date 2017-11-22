@@ -5,6 +5,7 @@ import os
 from six import text_type, binary_type
 
 
+
 def uid(name):
     """
     Generates UID uniquely for name by the means of hash function,

@@ -44,7 +44,14 @@ class AllureProperties(object):
                 self.properties = jprops.load_properties(fp, collections.OrderedDict)
             fp.close()
         else:
-            return false
+            self.properties = {}
+            self.set_property("allure.issues.id.pattern", "\\b([A-Z]{1,3}[-][0-9]{1,4})\\b")
+            self.set_property("allure.issues.tracker.pattern", "http://jira.yourcompany.com/tests/%s")
+            self.set_property("allure.tests.management.pattern", "http://tms.yourcompany.com/tests/%s")
+            self.set_property("allure.cli.logs.xml", "./allure-report")
+            self.set_property("allure.cli.logs.xml.clear", "True")
+            
+#             return False
          
 #         return properties
          

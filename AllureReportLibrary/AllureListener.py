@@ -38,7 +38,7 @@ from sqlalchemy.sql.expression import false
 from common import AllureImpl
 from constants import Robot, ROBOT_OUTPUT_FILES, SEVERITIES, STATUSSES
 from structure import AllureProperties, TestCase  # Overriding TestCase due to missing severity attribute. 
-from utils import clear_directory, copy_dir_contents
+from util_funcs import clear_directory, copy_dir_contents
 from version import VERSION
 
 
@@ -138,6 +138,7 @@ class AllureListener(object):
                         value=tag))
                 elif tag in STATUSSES:
                     test.status = tag  # overwrites the actual test status with this value.
+           
 
         self.PabotPoolId =  BuiltIn().get_variable_value('${PABOTEXECUTIONPOOLID}')
         
@@ -166,7 +167,8 @@ class AllureListener(object):
                 start=now(),
                 attachments=[],
                 labels=[],
-                steps=[])
+                steps=[],
+                severity='normal')
 
         self.stack.append(test)
         return
@@ -192,20 +194,25 @@ class AllureListener(object):
                     test.labels.append(TestLabel(
                         name=Label.ISSUE,
                         value=tag))
-                if tag.startswith('feature'):
+                elif tag.startswith('feature'):
                     test.labels.append(TestLabel(
                         name='feature',
                         value=tag.split(':')[-1]))
-                if tag.startswith('story'):
+                elif tag.startswith('story'):
                     test.labels.append(TestLabel(
                         name='story',
                         value=tag.split(':')[-1]))
                 elif tag in SEVERITIES:
                     test.labels.append(TestLabel(
                         name='severity',
-                        value=tag))
+                        value=tag))                    
+                    test.severity = tag
                 elif tag in STATUSSES:
                     test.status = tag  # overwrites the actual test status with this value.
+                else:
+                    test.labels.append(TestLabel(
+                        name='tag',
+                        value=tag))
 
         self.PabotPoolId =  BuiltIn().get_variable_value('${PABOTEXECUTIONPOOLID}')
         if(self.PabotPoolId is not None):
@@ -224,13 +231,17 @@ class AllureListener(object):
     def start_suite(self, name, attributes):
         
         self.SuitSrc =      BuiltIn().get_variable_value('${SUITE_SOURCE}')
+        self.ExecDir =      BuiltIn().get_variable_value('${EXECDIR}')
 
         # Reading the Allure Properties file for the Issue Id regular expression
         # for the Issues and the URL to where the Issues/Test Man links should go.
         if(self.AllurePropPath is None):
-            self.AllurePropPath = self.SuitSrc + '\\allure.properties'
+            self.AllurePropPath = self.ExecDir + '\\allure.properties'
 
         if os.path.exists(self.AllurePropPath) is True: 
+            self.AllureProperties = AllureProperties(self.AllurePropPath)
+            self.AllureIssueIdRegEx = self.AllureProperties.get_property('allure.issues.id.pattern')
+        else:
             self.AllureProperties = AllureProperties(self.AllurePropPath)
             self.AllureIssueIdRegEx = self.AllureProperties.get_property('allure.issues.id.pattern')
                            
@@ -290,8 +301,7 @@ class AllureListener(object):
         # The full check depends on the availability of all the vars which are 
         # only available when a Robot file has started.
         IsSuiteDirectory = os.path.isdir(BuiltIn().get_variable_value("${SUITE_SOURCE}"))
-        logger.console('end_suite SUITE_SOURCE '+BuiltIn().get_variable_value("${SUITE_SOURCE}"))
-        logger.console('end_suite log dir ' + self.AllureImplc.logdir)
+
         if(not(IsSuiteDirectory)):
             with self.AllureImplc._reportfile(logfilename) as f:
                 self.AllureImplc._write_xml(f, self.testsuite)
@@ -420,7 +430,7 @@ class AllureListener(object):
             self.save_environment()
 #             self.save_properties()
             self.AllureProperties.save_properties()
-            logger.console("pabot poolid: ["+ str(self.PabotPoolId)+"]")
+
             if (self.AllureProperties.get_property('allure.cli.outputfiles') and self.PabotPoolId is None):
                 self.allure(self.AllureProperties)
 
@@ -465,7 +475,7 @@ class AllureListener(object):
         ALLURE_URL=     AllureProps.get_property('allure.results.url')
         
         allure_cmd = JAVA_PATH + ' ' + ALLURE_HOME + ' ' + JAVA_CLASSPATH + ' ' + JAVA_CLASS + ' ' + ALLURE_COMMAND + ' ' + ALLURE_LOGFILE + ' ' + ALLURE_OUTPUT   
-
+        
         if(AllureProps.get_property('allure.cli.outputfiles')=='True'):
             FNULL = open(os.devnull, 'w') #stdout=FNULL,
             subprocess.Popen(allure_cmd, stderr=subprocess.STDOUT, shell=True).wait()
