@@ -12,3 +12,6 @@
 
 # Compiled source
 *.pyc
+
+# Pre-commit settings
+.pre-commit-config.yaml
