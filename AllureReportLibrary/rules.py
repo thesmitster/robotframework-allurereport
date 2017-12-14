@@ -4,7 +4,7 @@ import sys
 from lxml import objectify
 from namedlist import namedlist
 
-from AllureReportLibrary.util_funcs import unicode_helper
+from .AllureReportLibrary.util_funcs import unicode_helper
 
 
 def make_element(name, namespace):

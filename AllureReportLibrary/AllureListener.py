@@ -35,11 +35,11 @@ from robot.version import get_version, get_full_version, get_interpreter
 from six import text_type, iteritems
 from sqlalchemy.sql.expression import false
 
-from common import AllureImpl
-from constants import Robot, ROBOT_OUTPUT_FILES, SEVERITIES, STATUSSES
-from structure import AllureProperties, TestCase  # Overriding TestCase due to missing severity attribute. 
-from util_funcs import clear_directory, copy_dir_contents
-from version import VERSION
+from .common import AllureImpl
+from .constants import Robot, ROBOT_OUTPUT_FILES, SEVERITIES, STATUSSES
+from .structure import AllureProperties, TestCase  # Overriding TestCase due to missing severity attribute. 
+from .util_funcs import clear_directory, copy_dir_contents
+from .version import VERSION
 
 
 # for debugging purpose not needed by application
@@ -311,7 +311,7 @@ class AllureListener(object):
 #         logger.console('\nstart_keyword: ['+name+']')
 #         logger.console('  ['+attributes['type']+'] [stack lenght] ['+str(len(self.stack))+'] [testsuite lenght] ['+ str(len(self.testsuite.tests))+']')
 
-        if(hasattr(self, attributes.get('kwname').replace(" ", "_")) and callable(getattr(self, attributes.get('kwname').replace(" ", "_")))):
+        if(hasattr(self, attributes.get('kwname').replace(" ", "_")) and isinstance(getattr(self, attributes.get('kwname').replace(" ", "_")), collections.Callable)):
            libraryMethodToCall = getattr(self, attributes.get('kwname').replace(" ", "_"))
            result = libraryMethodToCall(name, attributes)
            keyword = TestStep(name=name,

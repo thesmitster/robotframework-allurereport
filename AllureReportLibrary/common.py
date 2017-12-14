@@ -10,7 +10,7 @@ import py
 import allure
 from allure.constants import AttachmentType, Status
 from allure.structure import Attach, TestStep, TestCase, TestSuite, Failure, EnvParameter
-from structure import Environment
+from .structure import Environment
 from allure.utils import now
 
 

@@ -1,7 +1,7 @@
-from AllureListener import AllureListener
+from .AllureListener import AllureListener
 from robot.libraries.BuiltIn import BuiltIn
 from robot.api import logger
-from version import VERSION
+from .version import VERSION
 
 class AllureReportLibrary:
     """

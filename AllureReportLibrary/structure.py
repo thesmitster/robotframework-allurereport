@@ -71,7 +71,7 @@ class AllureProperties(object):
  
     def get_property(self, name):
         
-        if name in self.properties.keys():
+        if name in list(self.properties.keys()):
             return self.properties[name]
         else:
             return None
