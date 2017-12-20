@@ -89,7 +89,8 @@ class AllureListener(object):
             attachments=[],
             labels=[],
 #           parameters=[],
-            steps=[])
+            steps=[],
+            severity='normal')
 
         self.stack.append(test)
         return
@@ -144,14 +145,14 @@ class AllureListener(object):
         self.PabotPoolId = BuiltIn().get_variable_value(
             '${PABOTEXECUTIONPOOLID}')
 
-        if(self.PabotPoolId is not None):
-            self.threadId = 'PabotPoolId-' + str(self.PabotPoolId)
-        else:
-            self.threadId = threading._get_ident()
+        # if(self.PabotPoolId is not None):
+        #     self.threadId = 'PabotPoolId-' + str(self.PabotPoolId)
+        # else:
+        #     self.threadId = threading._get_ident()
 
-        test.labels.append(TestLabel(
-            name='thread',
-            value=str(self.threadId)))
+        # test.labels.append(TestLabel(
+        #     name='thread',
+        #     value=str(self.threadId)))
 
         self.testsuite.tests.append(test)
         test.stop = now()
@@ -218,16 +219,16 @@ class AllureListener(object):
                         name='tag',
                         value=tag))
 
-        self.PabotPoolId =  BuiltIn().get_variable_value(
-            '${PABOTEXECUTIONPOOLID}')
-        if(self.PabotPoolId is not None):
-            self.threadId = 'PabotPoolId-' + str(self.PabotPoolId)
-        else:
-            self.threadId = threading._get_ident()
+        # self.PabotPoolId =  BuiltIn().get_variable_value(
+        #     '${PABOTEXECUTIONPOOLID}')
+        # if(self.PabotPoolId is not None):
+        #     self.threadId = 'PabotPoolId-' + str(self.PabotPoolId)
+        # else:
+        #     self.threadId = threading._get_ident()
 
-        test.labels.append(TestLabel(
-            name='thread',
-            value=str(self.threadId)))
+        # test.labels.append(TestLabel(
+        #     name='thread',
+        #     value=str(self.threadId)))
 
         self.testsuite.tests.append(test)
         test.stop = now()
@@ -452,7 +453,7 @@ class AllureListener(object):
 
             self.save_environment()
 #             self.save_properties()
-            self.AllureProperties.save_properties()
+            # self.AllureProperties.save_properties()
 
             if (self.AllureProperties.get_property('allure.cli.outputfiles') and self.PabotPoolId is None):
                 self.allure(self.AllureProperties)
